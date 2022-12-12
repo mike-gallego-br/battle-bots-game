@@ -4,6 +4,7 @@ import 'package:batlle_bots/models/chat.dart';
 import 'package:batlle_bots/models/client.dart';
 import 'package:batlle_bots/repositories/repositories_barrel.dart';
 import 'package:flame/components.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -23,7 +24,7 @@ class GameRepository {
 
   void init() {
     channel = IOWebSocketChannel.connect(
-      Uri.parse('ws://localhost:8080/ws'),
+      Uri.parse('ws://${dotenv.env['ADDRESS']}/ws'),
       pingInterval: const Duration(minutes: 5),
     );
 

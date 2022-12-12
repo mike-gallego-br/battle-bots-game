@@ -6,6 +6,7 @@ import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:window_manager/window_manager.dart';
 
 class BattleBotsBlocObserver extends BlocObserver {
@@ -23,18 +24,19 @@ class BattleBotsBlocObserver extends BlocObserver {
 }
 
 Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
-  FlutterError.onError =
-      (details) => log(details.exceptionAsString(), stackTrace: details.stack);
+  FlutterError.onError = (details) => log(details.exceptionAsString(), stackTrace: details.stack);
   WidgetsFlutterBinding.ensureInitialized();
+
+  await dotenv.load(fileName: '.env');
 
   switch (Platform.operatingSystem) {
     case 'android':
     case 'ios':
-      await SystemChrome.setPreferredOrientations(
-          [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
+      await SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
       await Flame.device.fullScreen();
       break;
     case 'windows':
+    case 'macos':
       await windowManager.ensureInitialized();
       WindowOptions windowOptions = const WindowOptions(
         size: Size(800, 600),
@@ -50,7 +52,7 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
         await windowManager.focus();
       });
       break;
-    case 'macos':
+    default:
       break;
   }
 
